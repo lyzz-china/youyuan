@@ -24,4 +24,11 @@ public interface FileMapper {
      * @return
      */
     FileDTO queryFileById(String fileId);
+
+    /**
+     * 根据ID删除文件
+     * @param fileId
+     * @return
+     */
+    int deleteFile(String fileId);
 }

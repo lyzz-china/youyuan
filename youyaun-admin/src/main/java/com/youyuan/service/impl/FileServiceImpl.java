@@ -7,6 +7,7 @@ import com.youyuan.mapper.FileMapper;
 import com.youyuan.model.FileDTO;
 import com.youyuan.service.FileService;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -153,6 +154,18 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
+    public boolean deleteFile(String fileId) {
+        if (StringUtil.isEmpty(fileId)) {
+            return false;
+        }
+        int i = fileMapper.deleteFile(fileId);
+        if (i <= 0) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public FileDTO queryFileById(String fileId) {
         if (StringUtil.isEmpty(fileId)) {
             return null;
@@ -177,7 +190,7 @@ public class FileServiceImpl implements FileService {
             return null;
         }
         String filePath = fileDTO.getFilePath();
-        String fullPath = fileBase + File.separator + filePath;
+        String fullPath = fileBase + "/" + filePath;
         File f = new File(fullPath);
         if (!f.exists()) {
             return null;

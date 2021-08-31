@@ -26,12 +26,12 @@
         ]]>
     </insert>
     
-<!--    <delete id="deleteFile" parameterType="string" >-->
-<!--        <![CDATA[-->
-<!--        delete from sys_file_info where file_id = #{fileId}-->
-<!--        ]]>-->
-<!--    </delete>-->
-<!--    -->
+    <delete id="deleteFile" parameterType="string" >
+        <![CDATA[
+        delete from sys_file_info where file_id = #{fileId}
+        ]]>
+    </delete>
+
     <select id="queryFileById" parameterType="string" resultMap="fileResultMap">
       <![CDATA[
       select file_id, media_type, file_format, file_path, is_zip, is_encrypt, original_name, file_size, image_width, image_height,

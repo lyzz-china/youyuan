@@ -18,6 +18,7 @@ public interface FileService {
      * 上传文件
      * @param file
      * @return
+     * @throws IOException
      */
     ResultDTO uploadFile(MultipartFile file) throws IOException;
 
@@ -35,6 +36,13 @@ public interface FileService {
      * @return
      */
     boolean insertFile(FileDTO fileDTO);
+
+    /**
+     * 删除一条文件信息
+     * @param fileId
+     * @return
+     */
+    boolean deleteFile(String fileId);
 
     /**
      * 根据文件id查询文件信息

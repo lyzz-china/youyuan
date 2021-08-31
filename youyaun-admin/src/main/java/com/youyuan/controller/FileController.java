@@ -7,6 +7,7 @@ import com.youyuan.service.FileService;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.Map;
 
 /**
 *
@@ -40,6 +42,21 @@ public class FileController {
             return ResultDTO.instance("41021","文件上传失败");
         }
     }
+
+    @PostMapping("/delete")
+    public ResultDTO deleteFile(@RequestBody Map<String, String> fileData) {
+        if (null == fileData) {
+            return ResultDTO.instance("01","文件id为空");
+        }
+        String fileId = fileData.get("fileId");
+        boolean deleted = fileService.deleteFile(fileId);
+        if(deleted){
+            return ResultDTO.instance();
+        }else{
+            return ResultDTO.instance("41029","文件删除失败");
+        }
+    }
+
 
     @GetMapping("/open")
     public void openFile(HttpServletResponse response,

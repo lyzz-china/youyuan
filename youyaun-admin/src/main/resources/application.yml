@@ -46,6 +46,8 @@ mybatis:
   type-aliases-package: com.youyuan.model
 
 youyuan:
+  api:
+  imageHost: http://fairytail.icu/
   file:
     repository:
       base: /usr/local/test/file/image-repository
