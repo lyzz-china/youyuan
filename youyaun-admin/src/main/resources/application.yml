@@ -120,7 +120,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://47.100.138.236:3306/YOUYUAN-PROD-BD?serverTimezone=UTC
+    url: jdbc:mysql://47.100.138.236:3306/YOUYUAN-TEST-BD?serverTimezone=UTC
     username: root
     password: 123456
   servlet:

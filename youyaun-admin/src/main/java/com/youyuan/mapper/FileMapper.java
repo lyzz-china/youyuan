@@ -17,4 +17,11 @@ public interface FileMapper {
      * @return
      */
     int insertFile(FileDTO fileDTO);
+
+    /**
+     * 根据文件ID查询文件信息
+     * @param fileId
+     * @return
+     */
+    FileDTO queryFileById(String fileId);
 }

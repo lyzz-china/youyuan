@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.ResultSet;
 
@@ -25,7 +26,7 @@ import java.sql.ResultSet;
 @Service
 public class FileServiceImpl implements FileService {
 
-    private static final String[] ALLOW_FILE_TYPES = { "jpg", "jpeg", "png","heic","heif","zip","image/png",
+    private static final String[] ALLOW_FILE_TYPES = { "jpg", "jpeg", "png","heic","heif","zip","image/png","image/jpg","image/jpeg",
             "application/vnd.ms-excel", "application/octet-stream",
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -149,6 +150,44 @@ public class FileServiceImpl implements FileService {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public FileDTO queryFileById(String fileId) {
+        if (StringUtil.isEmpty(fileId)) {
+            return null;
+        }
+        return fileMapper.queryFileById(fileId);
+    }
+
+    @Override
+    public String getRepositoryBase() {
+        return this.fileBase;
+    }
+
+    @Override
+    public String getDefaultFilePath() {
+        return this.filePath;
+    }
+
+    @Override
+    public FileInputStream getFileAsInputStream(String fileId) {
+        FileDTO fileDTO = queryFileById(fileId);
+        if (null == fileDTO) {
+            return null;
+        }
+        String filePath = fileDTO.getFilePath();
+        String fullPath = fileBase + File.separator + filePath;
+        File f = new File(fullPath);
+        if (!f.exists()) {
+            return null;
+        }
+        try{
+            return new FileInputStream(f);
+        }catch(IOException e){
+            log.debug("fileService.getFileAsInputStream exception occurs. ", e);
+        }
+        return null;
     }
 
 

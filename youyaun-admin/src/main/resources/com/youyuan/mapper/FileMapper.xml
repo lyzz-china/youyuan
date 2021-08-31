@@ -32,11 +32,11 @@
 <!--        ]]>-->
 <!--    </delete>-->
 <!--    -->
-<!--    <select id="queryFileById" parameterType="string" resultMap="fileResultMap">-->
-<!--      <![CDATA[-->
-<!--      select file_id, media_type, file_format, file_path, is_zip, is_encrypt, original_name, file_size, image_width, image_height,-->
-<!--      create_user_id, create_date, update_user_id, update_date-->
-<!--      from  sys_file_info  where file_id = #{fileId}-->
-<!--      ]]>-->
-<!--    </select>-->
+    <select id="queryFileById" parameterType="string" resultMap="fileResultMap">
+      <![CDATA[
+      select file_id, media_type, file_format, file_path, is_zip, is_encrypt, original_name, file_size, image_width, image_height,
+      create_user_id, create_date, update_user_id, update_date
+      from  sys_file_info  where file_id = #{fileId}
+      ]]>
+    </select>
 </mapper>
