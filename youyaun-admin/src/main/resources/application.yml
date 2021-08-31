@@ -1,0 +1,164 @@
+server:
+  servlet:
+    context-path: /youyuan-admin-service
+  port: 8081
+
+spring:
+  profiles:
+    active:
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://47.100.138.236:3306/YOUYUAN-TEST-BD?serverTimezone=UTC
+    username: root
+    password: 123456
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+  cache:
+    type: redis
+  redis:
+    database: 2
+    host: 192.168.1.7
+    port: 6379
+    password:
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: 120
+    connect-timeout: 300
+
+
+logging:
+  file:
+    name: youyuan-admin-service-log.log
+    max-size: 10MB
+  level:
+    com.abi.eb: DEBUG
+    com.zaxxer.hikari: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{150} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{150} - %msg%n"
+
+mybatis:
+  mapper-locations: com.youyuan.mapper/*.xml
+  type-aliases-package: com.youyuan.model
+
+youyuan:
+  file:
+    repository:
+      base: /usr/local/test/file/image-repository
+      path: upload
+
+
+---
+server:
+  servlet:
+    context-path: /youyuan-admin-service
+  port: 8081
+
+spring:
+  profiles:
+    active: test
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://47.100.138.236:3306/YOUYUAN-TEST-BD?serverTimezone=UTC
+    username: root
+    password: 123456
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+  cache:
+    type: redis
+  redis:
+    database: 2
+    host: 192.168.1.7
+    port: 6379
+    password:
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: 120
+    connect-timeout: 300
+
+
+logging:
+  file:
+    name: youyuan-admin-service-log.log
+    max-size: 10MB
+  level:
+    com.abi.eb: DEBUG
+    com.zaxxer.hikari: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{150} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{150} - %msg%n"
+
+mybatis:
+  mapper-locations: com.youyuan.mapper/*.xml
+  type-aliases-package: com.youyuan.model
+
+youyuan:
+  file:
+    repository:
+      base: /usr/local/test/file/image-repository
+      path: upload
+
+
+---
+
+server:
+  servlet:
+    context-path: /youyuan-admin-service
+  port: 8081
+
+spring:
+  profiles:
+    active: prod
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://47.100.138.236:3306/YOUYUAN-PROD-BD?serverTimezone=UTC
+    username: root
+    password: 123456
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+  cache:
+    type: redis
+  redis:
+    database: 2
+    host: 192.168.1.7
+    port: 6379
+    password:
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: 120
+    connect-timeout: 300
+
+
+logging:
+  file:
+    name: youyuan-admin-service-log.log
+    max-size: 10MB
+  level:
+    com.abi.eb: DEBUG
+    com.zaxxer.hikari: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{150} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{150} - %msg%n"
+
+mybatis:
+  mapper-locations: com.youyuan.mapper/*.xml
+  type-aliases-package: com.youyuan.model
+
+youyuan:
+  file:
+    repository:
+      base: /usr/local/prod/file/image-repository
+      path: upload
+
