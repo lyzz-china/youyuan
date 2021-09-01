@@ -7,21 +7,35 @@ import com.youyuan.mapper.UserMapper;
 import com.youyuan.model.UserDTO;
 import com.youyuan.service.UserService;
 import com.abi.eb.common.util.EncryptUtil;
+import com.youyuan.vo.OnlineUser;
+import com.youyuan.vo.UserToken;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Date;
+import java.util.Map;
 
 /**
 *
 * @author yizhong.liao
 * @createTime 2021/9/1 12:09
 */
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Value("${youyuan.token.secretKey}")
+    private String tokenSecretKey;
+    @Value("${youyuan.token.expireMinutes}")
+    private int tokenExpireMinutes;
 
     private String getEncryptedPwd(String password,String secret) {
         return EncryptUtil.PBKDF2Encrypt(password,secret).toUpperCase();
@@ -102,5 +116,88 @@ public class UserServiceImpl implements UserService {
             return null;
         }
         return userMapper.queryUserByCode(userCode);
+    }
+
+    @Override
+    public ResultDTO authUserLogin(String loginAccount, String password, Map<String, String> authOptions) {
+        if (StringUtil.isEmpty(loginAccount) || StringUtil.isEmpty(password)) {
+            return ResultDTO.instance("40101", "用户账号或密码为空");
+        }
+
+        UserDTO userDTO = queryUserByLoginAccount(loginAccount);
+        if (null == userDTO) {
+            return ResultDTO.instance("40102", "用户信息不存在");
+        }
+        if(userDTO.getUserStatus() != 1){
+            return ResultDTO.instance("01","用户被禁用或冻结");
+        }
+        String uaInfo = StringUtil.getStringValue(authOptions.get("uaInfo"));
+        String loginIp = StringUtil.getStringValue(authOptions.get("loginIp"));
+
+        String userSecret = userDTO.getUserSecret();
+        String encryptedPwd = getEncryptedPwd(password, userSecret);
+
+        userDTO.setLastLoginIp(loginIp);
+        userDTO.setLastLoginTime(DateTimeUtil.getCurrentDate());
+
+        if (!userDTO.getPassword().toUpperCase().equals(encryptedPwd)) {
+//            saveUserLoginHistory(loginData);
+            return ResultDTO.instance("30103", "账号或密码错误");
+        }
+        ResultDTO result = loginData(userDTO);
+//        saveUserLoginHistory(loginData);
+        return result;
+    }
+
+    @Override
+    public ResultDTO loginData(UserDTO userDTO) {
+        if (null == userDTO || StringUtil.isEmpty(userDTO.getUserId())) {
+            return ResultDTO.instance("31201", "无用户信息");
+        }
+        OnlineUser onlineUser = new OnlineUser();
+        onlineUser.setUserId(userDTO.getUserId());
+        onlineUser.setWorkPhone(userDTO.getWorkPhone());
+        onlineUser.setUserMail(userDTO.getUserMail());
+        onlineUser.setLoginAccount(userDTO.getLoginAccount());
+        onlineUser.setUserStatus(userDTO.getUserStatus());
+        onlineUser.setLastLoginTime(DateTimeUtil.getCurrentDate());
+        onlineUser.setLastLoginIp(userDTO.getLastLoginIp());
+        onlineUser.setUserName(userDTO.getUserName());
+        onlineUser.setUserType(userDTO.getUserType());
+
+        //TODO 权限
+
+        UserToken userToken = createUserToken(onlineUser);
+        ResultDTO result = ResultDTO.instance();
+        result.addDataEntry("userToken", userToken.getToken());
+        result.addDataEntry("tokenExpireTime", userToken.getExpireTime());
+        // 将OnlineUser对象加入返回对象中
+        result.addDataEntry("userInfo", onlineUser);
+        return result;
+    }
+
+    @Override
+    public UserToken createUserToken(OnlineUser olUser) {
+        return createUserToken(olUser, tokenExpireMinutes);
+    }
+
+    @Override
+    public UserToken createUserToken(OnlineUser olUser, int expireMinutes) {
+        UserToken userToken = new UserToken();
+        Date issueTime = DateTimeUtil.getCurrentDate();
+        Date expireTime = new Date(issueTime.getTime() + expireMinutes * 60 * 10000);
+        String token = Jwts.builder().setSubject(olUser.getLoginAccount())
+                .claim("userId",olUser.getUserId())
+                .setIssuedAt(issueTime)
+                .setExpiration(expireTime)
+                .signWith(SignatureAlgorithm.HS256, tokenSecretKey)
+                .compact();
+        log.info("generated token = " + token);
+        //TODO 保存到缓存
+
+        userToken.setToken(token);
+        userToken.setIssueTime(issueTime);
+        userToken.setExpireTime(expireTime);
+        return userToken;
     }
 }

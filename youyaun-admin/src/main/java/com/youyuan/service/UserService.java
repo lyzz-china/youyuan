@@ -2,6 +2,10 @@ package com.youyuan.service;
 
 import com.youyuan.common.dto.ResultDTO;
 import com.youyuan.model.UserDTO;
+import com.youyuan.vo.OnlineUser;
+import com.youyuan.vo.UserToken;
+
+import java.util.Map;
 
 /**
 *
@@ -30,5 +34,36 @@ public interface UserService {
      * @return
      */
     UserDTO queryUserByCode(String userCode);
+
+    /**
+     * 授权登录
+     * @param loginAccount
+     * @param password
+     * @param authOptions
+     * @return
+     */
+    ResultDTO authUserLogin(String loginAccount, String password, Map<String, String> authOptions);
+
+    /**
+     * 登录后用户数据
+     * @param userDTO
+     * @return
+     */
+    ResultDTO loginData(UserDTO userDTO);
+
+    /**
+     * 生成Token
+     * @param olUser
+     * @return
+     */
+    UserToken createUserToken(OnlineUser olUser);
+
+    /**
+     * 生成Token
+     * @param olUser
+     * @param expireMinutes
+     * @return
+     */
+    UserToken createUserToken(OnlineUser olUser, int expireMinutes);
 
 }

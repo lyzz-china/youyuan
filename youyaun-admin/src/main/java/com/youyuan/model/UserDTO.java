@@ -22,9 +22,11 @@ public class UserDTO {
     private String password;
     private String userSecret;
     private String userMail;
-    private String userMobile;
+    private String workPhone;
     private Integer userStatus;
     private Integer activeStatus;
+    private String lastLoginIp;
+    private Date lastLoginTime;
     private String createUserId;
     private Date createDate;
     private String updateUserId;
@@ -44,9 +46,11 @@ public class UserDTO {
                 ", password='" + password + '\'' +
                 ", userSecret='" + userSecret + '\'' +
                 ", userMail='" + userMail + '\'' +
-                ", userMobile='" + userMobile + '\'' +
+                ", workPhone='" + workPhone + '\'' +
                 ", userStatus=" + userStatus +
                 ", activeStatus=" + activeStatus +
+                ", lastLoginIp='" + lastLoginIp + '\'' +
+                ", lastLoginTime=" + lastLoginTime +
                 ", createUserId='" + createUserId + '\'' +
                 ", createDate=" + createDate +
                 ", updateUserId='" + updateUserId + '\'' +

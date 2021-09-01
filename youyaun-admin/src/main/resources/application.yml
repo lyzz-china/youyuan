@@ -107,7 +107,9 @@ youyuan:
     repository:
       base: /usr/local/test/file/image-repository
       path: upload
-
+  token:
+    secretKey: yuanEBSecretKey
+    expireMinutes: 60
 
 ---
 
