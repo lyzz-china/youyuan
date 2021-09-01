@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.youyuan.mapper.UserMapper" >
+    <resultMap type="userDTO" id="userMap">
+        <id property="userId" column="user_id	" />
+        <result property="userCode" column="user_code" />
+        <result property="userName" column="user_name" />
+        <result property="userType" column="user_type" />
+        <result property="loginAccount" column="login_account" />
+        <result property="password" column="password" />
+        <result property="userSecret" column="user_secret" />
+        <result property="userMail" column="user_mail" />
+        <result property="userMobile" column="user_mobile" />
+        <result property="userStatus" column="user_status" />
+        <result property="activeStatus" column="active_status" />
+        <result property="createUserId" column="create_user_id" />
+        <result property="createDate" column="create_date" />
+        <result property="updateUserId" column="update_user_id" />
+        <result property="updateDate" column="update_date" />
+        <result property="pwdExpireTime" column="pwd_expire_time" />
+    </resultMap>
+
+    <sql id="sql_user_info_sql">
+        user_id,user_code,user_name,user_type,login_account,password,user_secret,user_mail,user_mobile,user_status,active_status,create_user_id,create_date,update_user_id,update_date,pwd_expire_time
+    </sql>
+
+    <insert id="insertUser" parameterType="userDTO" useGeneratedKeys="true" keyProperty="userId">
+        insert into user_info(user_code,user_name,user_type,login_account,password,user_secret,user_mail,user_mobile,user_status,active_status,create_user_id,create_date,update_user_id,update_date,pwd_expire_time)
+        values (#{userCode},#{userName},#{userType},#{loginAccount},#{password},#{userSecret},#{userMail},#{userMobile},#{userStatus},#{activeStatus},#{createUserId},#{createDate},#{updateUserId},#{updateDate},#{pwdExpireTime})
+    </insert>
+
+    <select id="queryUserByLoginAccount" resultMap="userMap">
+        select <include refid="sql_user_info_sql" />
+        from user_info where active_status = 1 and  login_account = #{loginAccount}
+    </select>
+
+    <select id="queryUserByCode" parameterType="string" resultMap="userMap">
+        select     <include refid="sql_user_info_sql" />
+        from user_info where user_code = #{userCode} and active_status = 1
+    </select>
+
+</mapper>
