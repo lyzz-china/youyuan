@@ -19,10 +19,10 @@ spring:
   cache:
     type: redis
   redis:
-    database: 2
-    host: 192.168.1.7
+    database: 10
+    host: 47.100.138.236
     port: 6379
-    password:
+    password: 123456
     jedis:
       pool:
         max-active: 8
@@ -35,8 +35,8 @@ logging:
     name: youyuan-admin-service-log.log
     max-size: 10MB
   level:
-    com.abi.eb: DEBUG
-    com.zaxxer.hikari: DEBUG
+    com.youyuan.eb: INFO
+    com.zaxxer.hikari: INFO
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{150} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{150} - %msg%n"
@@ -76,10 +76,10 @@ spring:
   cache:
     type: redis
   redis:
-    database: 2
-    host: 192.168.1.7
+    database: 10
+    host: 47.100.138.236
     port: 6379
-    password:
+    password: 123456
     jedis:
       pool:
         max-active: 8
@@ -134,10 +134,10 @@ spring:
   cache:
     type: redis
   redis:
-    database: 2
-    host: 192.168.1.7
+    database: 10
+    host: 47.100.138.236
     port: 6379
-    password:
+    password: 123456
     jedis:
       pool:
         max-active: 8

@@ -5,6 +5,7 @@ import com.youyuan.model.UserDTO;
 import com.youyuan.vo.OnlineUser;
 import com.youyuan.vo.UserToken;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -65,5 +66,27 @@ public interface UserService {
      * @return
      */
     UserToken createUserToken(OnlineUser olUser, int expireMinutes);
+
+    /**
+     * 根据token获取在线用户
+     * @param token
+     * @return
+     */
+    OnlineUser getOnlineUserByToken(String token);
+
+    /**
+     * 检查token
+     * @param token
+     * @return
+     */
+    ResultDTO checkAuthToken(String token);
+
+    /**
+     * 查找在线用户
+     * @param request
+     * @return
+     */
+    OnlineUser findOnlineUser(HttpServletRequest request);
+
 
 }

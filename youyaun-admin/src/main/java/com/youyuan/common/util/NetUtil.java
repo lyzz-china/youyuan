@@ -43,4 +43,19 @@ public class NetUtil {
         return ip;
     }
 
+    public static String fetchBearerToken(HttpServletRequest request) {
+        if (null == request) {
+            return null;
+        }
+        final String authHeader = request.getHeader("Authorization");
+        String token = null;
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+        }
+        if (StringUtil.isEmpty(token)) {
+            token = request.getParameter("token");
+        }
+        return token;
+    }
+
 }

@@ -1,7 +1,10 @@
 package com.youyuan.service.impl;
 
+import com.youyuan.common.cache.CacheService;
+import com.youyuan.common.constants.CacheNames;
 import com.youyuan.common.dto.ResultDTO;
 import com.youyuan.common.util.DateTimeUtil;
+import com.youyuan.common.util.NetUtil;
 import com.youyuan.common.util.StringUtil;
 import com.youyuan.mapper.UserMapper;
 import com.youyuan.model.UserDTO;
@@ -9,14 +12,14 @@ import com.youyuan.service.UserService;
 import com.abi.eb.common.util.EncryptUtil;
 import com.youyuan.vo.OnlineUser;
 import com.youyuan.vo.UserToken;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
+import jdk.nashorn.internal.parser.Token;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.Map;
 
@@ -32,10 +35,16 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private CacheService defaultCacheService;
+
     @Value("${youyuan.token.secretKey}")
     private String tokenSecretKey;
     @Value("${youyuan.token.expireMinutes}")
     private int tokenExpireMinutes;
+
+    private static final String TOKEN_CACHE_KEY_TOKEN_PREFIX = "token_abi_";
+    private static final String SU_ACCOUNT = "admin";
 
     private String getEncryptedPwd(String password,String secret) {
         return EncryptUtil.PBKDF2Encrypt(password,secret).toUpperCase();
@@ -194,10 +203,53 @@ public class UserServiceImpl implements UserService {
                 .compact();
         log.info("generated token = " + token);
         //TODO 保存到缓存
-
+        defaultCacheService.put(CacheNames.USER_TOKEN_CACHE.getName(), TOKEN_CACHE_KEY_TOKEN_PREFIX + token, olUser);
         userToken.setToken(token);
         userToken.setIssueTime(issueTime);
         userToken.setExpireTime(expireTime);
         return userToken;
     }
+
+    @Override
+    public OnlineUser getOnlineUserByToken(String token) {
+        if (StringUtil.isEmpty(token)) {
+            return null;
+        }
+        return defaultCacheService.get(CacheNames.USER_TOKEN_CACHE.getName(), TOKEN_CACHE_KEY_TOKEN_PREFIX + token,
+                OnlineUser.class);
+    }
+
+    @Override
+    public ResultDTO checkAuthToken(String token) {
+        if (StringUtil.isEmpty(token)) {
+            return ResultDTO.instance("30321","token为空");
+        }
+        String authUserId;
+        try {
+            Claims body = Jwts.parser().setSigningKey(tokenSecretKey).parseClaimsJws(token).getBody();
+            authUserId = body.get("userId", String.class);
+        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException e) {
+            return ResultDTO.instance("30202","token异常或已过期");
+        }
+        OnlineUser onlineUser = getOnlineUserByToken(token);
+        if (onlineUser == null || StringUtil.isEmpty(authUserId)) {
+            return ResultDTO.instance("30203","token已过期");
+        }
+        if (!onlineUser.getUserId().equalsIgnoreCase(authUserId)) {
+            return ResultDTO.instance("30204","token信息异常");
+        }
+        return ResultDTO.instance();
+    }
+
+    @Override
+    public OnlineUser findOnlineUser(HttpServletRequest request) {
+        String token = NetUtil.fetchBearerToken(request);
+        ResultDTO resultDTO = checkAuthToken(token);
+        if (resultDTO.isFailure()) {
+            return null;
+        }
+        return getOnlineUserByToken(token);
+    }
+
+
 }
